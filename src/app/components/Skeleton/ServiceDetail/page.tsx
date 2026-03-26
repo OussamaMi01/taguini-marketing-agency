@@ -60,7 +60,7 @@ const ServiceDetailSkeleton = () => {
                     </ul>
                 </div>
             </section>
-            <UsedTech />
+           
         </>
     )
 }
