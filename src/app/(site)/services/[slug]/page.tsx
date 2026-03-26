@@ -30,7 +30,7 @@ interface Service {
 }
 
 interface PageProps {
-  params: { slug: string };
+   params: Promise<{ slug: string }>; 
 }
 
 // Fetch all services from API with caching
@@ -61,7 +61,8 @@ async function getServiceBySlug(slug: string): Promise<Service | null> {
 
 // Generate metadata for the page with better SEO
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const service = await getServiceBySlug(params.slug);
+  const { slug } = await params;
+  const service = await getServiceBySlug(slug);
   
   if (!service) {
     return {
@@ -154,7 +155,8 @@ export async function generateStaticParams() {
 
 // Page component with proper error handling
 export default async function ServicePage({ params }: PageProps) {
-  const service = await getServiceBySlug(params.slug);
+    const { slug } = await params;
+  const service = await getServiceBySlug(slug);
   
   if (!service) {
     notFound();
