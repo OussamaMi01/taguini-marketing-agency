@@ -10,7 +10,7 @@ import { fr } from "date-fns/locale";
 import { Icon } from "@iconify/react";
 
 type Props = {
-  params: { slug: string };
+   params: Promise<{ slug: string }>; 
 };
 
 // Generate static paths for all blog posts
@@ -23,7 +23,8 @@ export async function generateStaticParams() {
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const post = getPostBySlug(params.slug, ["title", "excerpt", "coverImage", "date"]);
+   const { slug } = await params;
+  const post = getPostBySlug(slug, ["title", "excerpt", "coverImage", "date"]);
   
   if (!post) {
     return {
@@ -52,7 +53,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function Post({ params }: Props) {
-  const post = getPostBySlug(params.slug, [
+    const { slug } = await params;
+  const post = getPostBySlug(slug, [
     "title",
     "author",
     "authorImage",
@@ -71,8 +73,9 @@ export default async function Post({ params }: Props) {
 
   // Get related posts (excluding current post)
   const allPosts = getAllPosts(["title", "slug", "coverImage", "date", "excerpt"]);
+  
   const relatedPosts = allPosts
-    .filter(p => p.slug !== params.slug)
+    .filter(p => p.slug !== slug)
     .slice(0, 3);
 
   return (
@@ -174,7 +177,7 @@ export default async function Post({ params }: Props) {
               </h3>
               <div className="flex gap-3">
                 <a
-                  href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`https://taguinimarketing.com/blog/${params.slug}`)}`}
+                  href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`https://taguinimarketing.com/blog/${slug}`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-10 h-10 rounded-full bg-[#1877f2] flex items-center justify-center hover:scale-110 transition-transform"
@@ -182,7 +185,7 @@ export default async function Post({ params }: Props) {
                   <Icon icon="mdi:facebook" className="text-white text-xl" />
                 </a>
                 <a
-                  href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(`https://taguinimarketing.com/blog/${params.slug}`)}`}
+                  href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(`https://taguinimarketing.com/blog/${slug}`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-10 h-10 rounded-full bg-[#1da1f2] flex items-center justify-center hover:scale-110 transition-transform"
@@ -190,7 +193,7 @@ export default async function Post({ params }: Props) {
                   <Icon icon="mdi:twitter" className="text-white text-xl" />
                 </a>
                 <a
-                  href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(`https://taguinimarketing.com/blog/${params.slug}`)}&title=${encodeURIComponent(post.title)}`}
+                  href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(`https://taguinimarketing.com/blog/${slug}`)}&title=${encodeURIComponent(post.title)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-10 h-10 rounded-full bg-[#0a66c2] flex items-center justify-center hover:scale-110 transition-transform"
